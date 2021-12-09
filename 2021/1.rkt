@@ -8,13 +8,6 @@
 (define depths
   (parse-input input))
 
-(define (zip-with op . seqs)
-  (if (ormap empty? seqs)
-      null
-      (let ([vs (map first seqs)])
-        (cons (apply op vs)
-              (apply zip-with op (map rest seqs))))))
-
 (define-flow init ; a list containing all but the last element
   (~> △ X (block 1) X ▽))
 

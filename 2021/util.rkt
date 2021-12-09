@@ -2,7 +2,10 @@
 
 (provide read-input
          read-input-file
-         parse-input)
+         parse-input
+         zip-with
+         zip
+         unzip)
 
 (require qi
          sugar)
@@ -22,6 +25,18 @@
 
 (define-flow parse-input
   (~> △ (>< (~>> string-split (map (☯ maybe-to-integer)) (if singleton? first _))) ▽))
+
+(define (zip-with op . seqs)
+  (if (ormap empty? seqs)
+      null
+      (let ([vs (map first seqs)])
+        (cons (apply op vs)
+              (apply zip-with op (map rest seqs))))))
+
+(define (zip . seqs)
+  (apply zip-with list seqs))
+
+(define unzip (curry apply zip))
 
 (module+ test
   (require rackunit
