@@ -15,7 +15,7 @@
   (~> > (if _ 0 1)))
 
 (define-flow numerify
-  (map (☯ (~>> ->list (map (☯ (~> ->string ->integer)) _))) _))
+  (map (☯ (~>> ->list (map (☯ (~> ->string ->integer))))) _))
 
 (define-flow gamma
   (~>> unzip △ (>< (~> bitcounts mode-bit)) ▽))
@@ -35,17 +35,17 @@
 
 (define (scrubber rate-flo)
   (☯ (~> numerify
-         (-< 0 rate-flo △)
+         (-< 0 rate-flo △) ; start the flows the loop will need
          (feedback (while (~> (block 1 2) count (> 1)))
-                   (then (block 1 2))
-                   (-< (~> 1> add1)
+                   (then (block 1 2)) ; get rid of "scratch tape" at the end
+                   (-< (~> 1> add1) ; the first flow (column number) to the next cycle
                        (~> (-< (~> (-< 1> 2>)
                                    (clos (~> (-< (~> (select 2 1) list-ref)
                                                  (~> (select 3 1) list-ref)) =)))
                                (block 1 2))
                            pass
-                           (-< (~> ▽ rate-flo)
-                               _)))))))
+                           (-< (~> ▽ rate-flo) ; second flow to the next cycle (computed rate value)
+                               _))))))) ; third flow to the next cycle (the actual remaining data)
 
 (define oxygen (scrubber gamma))
 
